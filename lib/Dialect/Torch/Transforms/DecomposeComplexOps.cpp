@@ -5468,12 +5468,12 @@ public:
       return rewriter.notifyMatchFailure(
           op, "Dim list elements must be constant integers");
     for (unsigned i = dimListInts.size(); i > 0; i--) {
-      Value cstDim = rewriter.create<Torch::ConstantIntOp>(
+      Value cstDim = Torch::ConstantIntOp::create(rewriter,
           loc, rewriter.getI64IntegerAttr(dimListInts[i - 1]));
       BaseTensorType selfType = cast<BaseTensorType>(self.getType());
       Type squeezedType = computeReductionType(rewriter, op, selfType, cstDim,
                                                /*keepDim=*/false);
-      self = rewriter.create<AtenSqueezeDimOp>(loc, squeezedType, self, cstDim);
+      self = AtenSqueezeDimOp::create(rewriter, loc, squeezedType, self, cstDim);
     }
     rewriter.replaceOp(op, self);
     return success();
